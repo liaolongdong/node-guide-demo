@@ -1,0 +1,9 @@
+.classpath
+.project
+.settings
+.idea
+npm-debug.log
+logs/
+public/
+zip/
+node_modules
