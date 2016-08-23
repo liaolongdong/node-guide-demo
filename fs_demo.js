@@ -98,24 +98,51 @@ var path = require('path');
 
 // stat方法的参数是一个文件或目录，它产生一个对象，
 // 该对象包含了该文件或目录的具体信息。
-fs.readdir('/node_guide_demo/', function(err, files){
+// fs.readdir('./', function(err, files){
+// 	if(err){
+// 		console.log(err);
+// 		throw err;
+// 	}
+
+// 	files.forEach(function(file){
+// 		fs.stat('./' + file, function(err, stats){
+// 			if(err){
+// 				console.log(err);
+// 				throw err;
+// 			}
+// 			if(stats.isFile()){
+// 				console.log('%s is file', file);
+// 			}else if(stats.isDirectory()){
+// 				console.log('%s is directory', file);
+// 			}
+// 			console.log('stats:%s',JSON.stringify(stats));
+// 		});
+// 	});
+// });
+
+
+// 监听文件，当文件发生变化时，自动触发回调函数
+fs.watchFile('./fs_test_files/test_file.txt', function(curr,prev){
+	console.log('the current mtime is:' + curr.mtime);
+	console.log('the previous mtime was:' + prev.mtime);
+});
+console.log('file change watch is started!');
+fs.writeFile('./fs_test_files/test_file.txt', 'changed', function(err){
 	if(err){
-		console.log(err);
 		throw err;
 	}
-
-	files.forEach(function(file){
-		fs.stat('/node_guide_demo/' + file, function(err, stats){
-			if(err){
-				console.log(err);
-				throw err;
-			}
-			if(stats.isFile()){
-				console.log('%s is file', file);
-			}else if(stats.isDirectory()){
-				console.log('%s is directory', file);
-			}
-			console.log('stats:%s',JSON.stringify(stats));
-		});
-	});
+	console.log('file write complete');
 });
+
+
+// 取消文件监听
+// fs.unwatchFile('./fs_test_files/test_file/txt',function(err){
+// 	if(err){
+// 		console.log(err);
+// 	}
+// 	console.log('The file is unwatch!');
+// });
+fs.unwatchFile('./fs_test_files/test_file.txt');
+console.log('file is unwatch!');
+
+
