@@ -209,3 +209,5 @@ function done(){
 	console.log('File copy has finshed!');
 }
 fileCopy('./fs_test_files/lines.txt', './fs_test_files/target_lines.txt', done);
+// 拷贝图片
+fileCopy('./temp/test.gif', './temp/target_test.gif', done);
