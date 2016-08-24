@@ -122,17 +122,17 @@ var path = require('path');
 
 
 // 监听文件，当文件发生变化时，自动触发回调函数
-fs.watchFile('./fs_test_files/test_file.txt', function(curr,prev){
-	console.log('the current mtime is:' + curr.mtime);
-	console.log('the previous mtime was:' + prev.mtime);
-});
-console.log('file change watch is started!');
-fs.writeFile('./fs_test_files/test_file.txt', 'changed', function(err){
-	if(err){
-		throw err;
-	}
-	console.log('file write complete');
-});
+// fs.watchFile('./fs_test_files/test_file.txt', function(curr,prev){
+// 	console.log('the current mtime is:' + curr.mtime);
+// 	console.log('the previous mtime was:' + prev.mtime);
+// });
+// console.log('file change watch is started!');
+// fs.writeFile('./fs_test_files/test_file.txt', 'changed', function(err){
+// 	if(err){
+// 		throw err;
+// 	}
+// 	console.log('file write complete');
+// });
 
 
 // 取消文件监听
@@ -142,7 +142,70 @@ fs.writeFile('./fs_test_files/test_file.txt', 'changed', function(err){
 // 	}
 // 	console.log('The file is unwatch!');
 // });
-fs.unwatchFile('./fs_test_files/test_file.txt');
-console.log('file is unwatch!');
+// fs.unwatchFile('./fs_test_files/test_file.txt');
+// console.log('file is unwatch!');
 
 
+// 创建大型文本文件读取流
+// function readLines(input, func){
+// 	var remaining = '';
+// 	input.on('data', function(data){
+// 		remaining += data;
+// 		console.log('remaining',remaining);
+// 		var index = remaining.indexOf('\n');
+// 		var last = 0;
+// 		console.log('index',index);
+// 		while(index > -1){
+// 			var line = remaining.substring(last, index);
+// 			last = index + 1;
+// 			func(line);
+// 			index = remaining.indexOf('\n',last);
+// 		}
+
+// 		remaining = remaining.substring(last);
+// 	});
+
+// 	input.on('end',function(){
+// 		if(remaining.length > 0){
+// 			func(remaining);
+// 		}
+// 	});
+// }
+// function func(data){
+// 	console.log('Line:' + data);
+// }
+// var input = fs.createReadStream('./fs_test_files/lines.txt');
+// readLines(input, func);
+
+
+// 创建写入数据流对象
+// var filename = './fs_test_files/write_lines.txt';
+// var str = 'write message!';
+// var out = fs.createWriteStream(filename, {
+// 	encoding: 'utf8'
+// });
+// out.write(str);
+// out.end();
+
+
+// createwriteStream和createReadStream方法配合，实现拷贝大型文件
+function fileCopy(srcFilename, targetFilename, done){
+	var input = fs.createReadStream(srcFilename);
+	var output = fs.createWriteStream(targetFilename);
+	input.on('data', function(data){
+		output.write(data);
+	});
+	input.on('error', function(err){
+		throw err;
+	});
+	input.on('end', function(){
+		output.end();
+		if(done){
+			done();
+		}
+	});
+}
+function done(){
+	console.log('File copy has finshed!');
+}
+fileCopy('./fs_test_files/lines.txt', './fs_test_files/target_lines.txt', done);
