@@ -8,3 +8,4 @@ node入门练习demo
 - Buffer对象（二进制）
 - events模块（事件）
 - stream接口（数据流）
+- child_process模块（用于新建子进程）
