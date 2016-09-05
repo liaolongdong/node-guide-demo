@@ -122,72 +122,95 @@ var fs = require('fs');
 // req.end();
 
 // Server方法用于新建一个服务器实例
-var server = new http.Server();
-server.listen(8000);
-server.on('request', function(req, res){
-	// 解析请求的URL
-	var url = require('url').parse(req.url);
-	if(url.pathname === '/test/one'){
-		res.writeHead(200, {'Content-Type': 'text/plain;charset=utf-8'});
-		res.write('Hello');
-		res.end();
-	}else if(url.pathname === '/test/two'){
-		res.writeHead(200, {'Content-Type': 'text/plain;charset=utf-8'});
-		res.write(req.method + ' ' + req.url + 
-			' HTTP/' + req.httpVersion + '\r\n');
-		for(var h in req.headers){
-			res.write(h + ': ' + req.headers[h] + '\r\n');
-		}
-		res.write('\r\n');
-		req.on('data', function(chunk){
-			res.write(chunk);
-		});
-		req.on('end', function(chunk){
-			res.end();
-		});
-	}else{
-		var filename = url.pathname.substring(1);
-	    var type;
-	    switch(filename.substring(filename.lastIndexOf('.') + 1))  {
-	      	case 'html':
-	      	case 'htm':      
-	      		type = 'text/html; charset=UTF-8'; 
-	      		break;
-	      	case 'js':       
-	      		type = 'application/javascript; charset=UTF-8';
-	      		break;
-	      	case 'css':      
-	      		type = 'text/css; charset=UTF-8'; 
-	      		break;
-	      	case 'txt' :     
-	      		type = 'text/plain; charset=UTF-8'; 
-	      		break;
-	      	case 'manifest': 
-	      		type = 'text/cache-manifest; charset=UTF-8'; 
-	      		break;
-	      	default:         
-	      		type = 'application/octet-stream'; 
-	      		break;
-	    }
-	    fs.readFile(filename, function (err, content) {
-	      	if (err) {
-	        	res.writeHead(404, {
-	          	'Content-Type': 'text/plain; charset=UTF-8'});
-	        	res.write(err.message);
-	        	res.end();
-	      	} else {
-	        	res.writeHead(200, {'Content-Type': type});
-	        	res.write(content);
-	        	res.end();
-	      	}
-	    });
-	}
-});
+// var server = new http.Server();
+// server.listen(8000);
+// server.on('request', function(req, res){
+// 	// 解析请求的URL
+// 	var url = require('url').parse(req.url);
+// 	if(url.pathname === '/test/one'){
+// 		res.writeHead(200, {'Content-Type': 'text/plain;charset=utf-8'});
+// 		res.write('Hello');
+// 		res.end();
+// 	}else if(url.pathname === '/test/two'){
+// 		res.writeHead(200, {'Content-Type': 'text/plain;charset=utf-8'});
+// 		res.write(req.method + ' ' + req.url + 
+// 			' HTTP/' + req.httpVersion + '\r\n');
+// 		for(var h in req.headers){
+// 			res.write(h + ': ' + req.headers[h] + '\r\n');
+// 		}
+// 		res.write('\r\n');
+// 		req.on('data', function(chunk){
+// 			res.write(chunk);
+// 		});
+// 		req.on('end', function(chunk){
+// 			res.end();
+// 		});
+// 	}else{
+// 		var filename = url.pathname.substring(1);
+// 	    var type;
+// 	    switch(filename.substring(filename.lastIndexOf('.') + 1))  {
+// 	      	case 'html':
+// 	      	case 'htm':      
+// 	      		type = 'text/html; charset=UTF-8'; 
+// 	      		break;
+// 	      	case 'js':       
+// 	      		type = 'application/javascript; charset=UTF-8';
+// 	      		break;
+// 	      	case 'css':      
+// 	      		type = 'text/css; charset=UTF-8'; 
+// 	      		break;
+// 	      	case 'txt' :     
+// 	      		type = 'text/plain; charset=UTF-8'; 
+// 	      		break;
+// 	      	case 'manifest': 
+// 	      		type = 'text/cache-manifest; charset=UTF-8'; 
+// 	      		break;
+// 	      	default:         
+// 	      		type = 'application/octet-stream'; 
+// 	      		break;
+// 	    }
+// 	    fs.readFile(filename, function (err, content) {
+// 	      	if (err) {
+// 	        	res.writeHead(404, {
+// 	          	'Content-Type': 'text/plain; charset=UTF-8'});
+// 	        	res.write(err.message);
+// 	        	res.end();
+// 	      	} else {
+// 	        	res.writeHead(200, {'Content-Type': type});
+// 	        	res.write(content);
+// 	        	res.end();
+// 	      	}
+// 	    });
+// 	}
+// });
 
+// 搭建HTTPs服务器
+// 自制SSL证书需要OpenSSL，具体命令如下。
+// $ openssl genrsa -out key.pem
+// $ openssl req -new -key key.pem -out csr.pem
+// $ openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
+// $ rm csr.pem
+// 上面的命令生成两个文件：ert.pem（证书文件）和 key.pem（私钥文件）。
+// 有了这两个文件，就可以运行HTTPs服务器了
 
+// node内置https支持
+// var server = https.createServer({
+// 	key: privateKey,
+// 	cert: certificate,
+// 	ca: certificateAuthorityCertificate
+// }, app);
 
-
-
+// node.js提供一个https模块，专门用于处理加密访问
+var https = require('https');
+var fs = require('fs');
+var options = {
+	key: fs.readFileSync('key.pem'),
+	cert: fs.readFileSync('cert.pem')
+};
+var server = https.createServer(options, function(req, res){
+	res.writeHead(200);
+	res.end('hello world\n');
+}).listen(8000);
 
 
 
