@@ -9,3 +9,4 @@ node入门练习demo
 - events模块（事件）
 - stream接口（数据流）
 - child_process模块（用于新建子进程）
+- http模块（主要用于搭建HTTP服务）
