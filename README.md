@@ -11,3 +11,4 @@ node入门练习demo
 - child_process模块（用于新建子进程）
 - http模块（主要用于搭建HTTP服务）
 - assert模块（主要用于断言）
+- cluster模块（允许设立一个主进程和若干个worker进程）
